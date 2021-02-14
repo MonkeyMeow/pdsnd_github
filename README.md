@@ -1,15 +1,18 @@
 ### Date created
-Include the date you created this project and README file.
+14 Feb 2021
 
 ### Project Title
-Replace the Project Title
+Udacity Bikeshare R
 
 ### Description
-Describe what your project is about and what it does
+Analysis of Bikeshare Data
 
 ### Files used
-Include the files used
+Explore_bikeshare_data.Rmd
+chicago.csv
+new_york_city.csv
+washington.csv
 
 ### Credits
-It's important to give proper credit. Add links to any repo that inspired you or blogposts you consulted.
+None
 
