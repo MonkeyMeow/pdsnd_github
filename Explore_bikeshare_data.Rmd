@@ -20,10 +20,6 @@ city.names <- list("New York", "Chicago", "Washington")
 my.data.frames <- lapply(file.names, read.csv)
 ```
 
-### Note on code below
-
-**I did not use loops in some places because the print() function did not produce nice displays.**
-
 ```{r echo=FALSE}
 n <- 1
 city.names[[n]]
