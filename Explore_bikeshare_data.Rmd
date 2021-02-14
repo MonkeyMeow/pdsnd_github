@@ -21,18 +21,11 @@ my.data.frames <- lapply(file.names, read.csv)
 ```
 
 ```{r echo=FALSE}
-n <- 1
-city.names[[n]]
-head(my.data.frames[[n]])
-tail(my.data.frames[[n]])
-n <- 2
-city.names[[n]]
-head(my.data.frames[[n]])
-tail(my.data.frames[[n]])
-n <- 3
-city.names[[n]]
-head(my.data.frames[[n]])
-tail(my.data.frames[[n]])
+for (n in 1:3)  {
+  print(city.names[[n]])
+  print(head(my.data.frames[[n]]))
+  print(tail(my.data.frames[[n]]))
+}
 ```
 
 ### Observation on data
@@ -62,21 +55,12 @@ my.colours <- c("darkred", "darkgreen", "darkblue")
 my.themes <- lapply(my.colours, function(c) {  return (theme(title = element_text(colour = c))) })
 # re read all CSV files
 my.data.frames <- lapply(file.names, re.read)
-n <- 1
-city.names[[n]]
-head(my.data.frames[[n]])
-tail(my.data.frames[[n]])
-str(my.data.frames[[n]])
-n <- 2
-city.names[[n]]
-head(my.data.frames[[n]])
-tail(my.data.frames[[n]])
-str(my.data.frames[[n]])
-n <- 3
-city.names[[n]]
-head(my.data.frames[[n]])
-tail(my.data.frames[[n]])
-str(my.data.frames[[n]])
+for (n in 1:3)  {
+  print(city.names[[n]])
+  print(head(my.data.frames[[n]]))
+  print(tail(my.data.frames[[n]]))
+  print(str(my.data.frames[[n]]))
+}
 ```
 
 ### Question 1
@@ -101,18 +85,11 @@ p <- ggplot(data = freq.dfs[[1]], aes(x = Start.Station, y = End.Station, alpha 
        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
        theme(plot.title = element_text(hjust = 0.5))
 title.beg <- "Top 20 Most Common Starting-Ending\nStation Combinations in"
-n <- 1
-city.names[[n]]
-freq.dfs[[n]]
-p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]]
-n <- 2
-city.names[[n]]
-freq.dfs[[n]]
-p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]]
-n <- 3
-city.names[[n]]
-freq.dfs[[n]]
-p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]]
+for (n in 1:3)  {
+  print(city.names[[n]])
+  print(freq.dfs[[n]])
+  print(p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]])
+}
 ```
 
 **The most popular starting-ending station combinations for each city are as follows. Notice that for Washington the starting and ending is the same station, while this is not the case for New York nor Chicago.**
@@ -140,18 +117,11 @@ p <-ggplot(my.data.frames[[1]], aes(x = DoW)) +
       ylab("Number of Rides during Observation Period") +
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
       theme(plot.title = element_text(hjust = 0.5)) + facet_wrap(~ User.Type)
-n <- 1
-by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
-city.names[[n]]
-p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
-n <- 2
-by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
-city.names[[n]]
-p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
-n <- 3
-by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
-city.names[[n]]
-p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
+for (n in 1:3)  {
+  print(by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary))
+  print(city.names[[n]])
+  print(p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end)))
+}
 ```
 
 **For subscribers, the highest number of riders occurred on Wednesdays for both New York and Chicago, and on Tuesdays for Washington. For customers, the highest number of rides occurred on Sundays for New York, and on Saturdays for both Chicago and Washington.**
@@ -170,24 +140,12 @@ p <-ggplot(my.data.frames[[1]], aes(x = Trip.Minutes, na.rm = TRUE)) +
       xlab("Duration of ride in minutes") +
       ylab("Number of Rides Observed") +
       theme(plot.title = element_text(hjust = 0.5)) + facet_wrap(~ User.Type)
-n <- 1
-city.names[[n]]
-summary(my.data.frames[[n]]$Trip.Minutes)
-by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary)
-p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
-  my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end))
-n <- 2
-city.names[[n]]
-summary(my.data.frames[[n]]$Trip.Minutes)
-by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary)
-p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
-  my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end))
-n <- 3
-city.names[[n]]
-summary(my.data.frames[[n]]$Trip.Minutes)
-by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary)
-p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
-  my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end))
+for (n in 1:3)  {
+  print(city.names[[n]])
+  print(summary(my.data.frames[[n]]$Trip.Minutes))
+  print(by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary))
+  print(p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) + my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end)))
+}
 ```
 
 **The median is 10.2, 11.8 and 11.2 minutes respectively for New York, Chicago and Washington.**
@@ -203,22 +161,14 @@ p <-ggplot(my.data.frames[[1]], aes(x = Birth.Year, na.rm = TRUE)) +
       xlab("Year of Birth") +
       ylab("Number of Persons Observed") +
       theme(plot.title = element_text(hjust = 0.5)) + facet_wrap(~ Gender)
-n <- 1
-city.names[[n]]
-df <- my.data.frames[[n]]
-df <- df[match(unique(df$X), df$X), ]  # X should be the unique person identifier
-summary(df$Birth.Year)
-by(df$Birth.Year, df$Gender, summary)
-p %+% df + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
-  my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
-n <- 3
-city.names[[n]]
-df <- my.data.frames[[n]]
-df <- df[match(unique(df$X), df$X), ]  # X should be the unique person identifier
-summary(df$Birth.Year)
-by(df$Birth.Year, df$Gender, summary)
-p %+% df + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
-  my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
+for (n in seq(1,3,by=2))  {
+  print(city.names[[n]])
+  df <- my.data.frames[[n]]
+  df <- df[match(unique(df$X), df$X), ]  # X should be the unique person identifier
+  print(summary(df$Birth.Year))
+  print(by(df$Birth.Year, df$Gender, summary))
+  print(p %+% df + geom_histogram(binwidth = 1, fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end)))
+}
 ```
 
 **The median year of birth of the riders is 1981 for New York and 1984 for Washington.**
