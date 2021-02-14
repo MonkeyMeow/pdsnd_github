@@ -148,7 +148,12 @@ for (n in 1:3)  {
 }
 ```
 
-**The median is 10.2, 11.8 and 11.2 minutes respectively for New York, Chicago and Washington.**
+**The respective medians in minutes for New York, Chicago and Washington are:**
+```{r echo=FALSE}
+for (i in 1:3)  {
+  print(median(my.data.frames[[i]]$Trip.Minutes))
+}
+```
 
 ### Question 4
 
