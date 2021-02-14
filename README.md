@@ -2,7 +2,7 @@
 14 Feb 2021
 
 ### Project Title
-Udacity Bikeshare R
+Bikeshare R
 
 ### Description
 Analysis of Bikeshare Data
