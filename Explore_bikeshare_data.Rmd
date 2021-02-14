@@ -20,25 +20,15 @@ city.names <- list("New York", "Chicago", "Washington")
 my.data.frames <- lapply(file.names, read.csv)
 ```
 
-### Note on code below
-
-**I did not use loops in some places because the print() function did not produce nice displays.**
-
 ```{r echo=FALSE}
 n <- 1
 city.names[[n]]
 head(my.data.frames[[n]])
 tail(my.data.frames[[n]])
-```
-
-```{r echo=FALSE}
 n <- 2
 city.names[[n]]
 head(my.data.frames[[n]])
 tail(my.data.frames[[n]])
-```
-
-```{r echo=FALSE}
 n <- 3
 city.names[[n]]
 head(my.data.frames[[n]])
@@ -72,25 +62,16 @@ my.colours <- c("darkred", "darkgreen", "darkblue")
 my.themes <- lapply(my.colours, function(c) {  return (theme(title = element_text(colour = c))) })
 # re read all CSV files
 my.data.frames <- lapply(file.names, re.read)
-```
-
-```{r echo=FALSE}
 n <- 1
 city.names[[n]]
 head(my.data.frames[[n]])
 tail(my.data.frames[[n]])
 str(my.data.frames[[n]])
-```
-
-```{r echo=FALSE}
 n <- 2
 city.names[[n]]
 head(my.data.frames[[n]])
 tail(my.data.frames[[n]])
 str(my.data.frames[[n]])
-```
-
-```{r echo=FALSE}
 n <- 3
 city.names[[n]]
 head(my.data.frames[[n]])
@@ -110,9 +91,6 @@ fStartEndTopN <- function(data.frame, N = 20)  {
     return (res2)
 }
 freq.dfs <- lapply(my.data.frames, fStartEndTopN)
-```
-
-```{r echo=FALSE}
 p <- ggplot(data = freq.dfs[[1]], aes(x = Start.Station, y = End.Station, alpha = Freq)) +
        scale_alpha_continuous(range = c(0.05, 1.0)) +
        guides(alpha = guide_legend(reverse = TRUE)) +
@@ -127,16 +105,10 @@ n <- 1
 city.names[[n]]
 freq.dfs[[n]]
 p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]]
-```
-
-```{r echo=FALSE}
 n <- 2
 city.names[[n]]
 freq.dfs[[n]]
 p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]]
-```
-
-```{r echo=FALSE}
 n <- 3
 city.names[[n]]
 freq.dfs[[n]]
@@ -172,16 +144,10 @@ n <- 1
 by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
 city.names[[n]]
 p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
-```
-
-```{r echo=FALSE}
 n <- 2
 by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
 city.names[[n]]
 p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
-```
-
-```{r echo=FALSE}
 n <- 3
 by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
 city.names[[n]]
@@ -210,18 +176,12 @@ summary(my.data.frames[[n]]$Trip.Minutes)
 by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary)
 p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
   my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end))
-```
-
-```{r echo=FALSE}
 n <- 2
 city.names[[n]]
 summary(my.data.frames[[n]]$Trip.Minutes)
 by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary)
 p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
   my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end))
-```
-
-```{r echo=FALSE}
 n <- 3
 city.names[[n]]
 summary(my.data.frames[[n]]$Trip.Minutes)
@@ -251,9 +211,6 @@ summary(df$Birth.Year)
 by(df$Birth.Year, df$Gender, summary)
 p %+% df + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
   my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
-```
-
-```{r echo=FALSE}
 n <- 3
 city.names[[n]]
 df <- my.data.frames[[n]]
