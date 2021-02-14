@@ -1,0 +1,267 @@
+---
+title: "Udacity Bike Sharing Project"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Explore Bike Share Data
+
+For this project, your goal is to ask and answer three questions about the available bikeshare data from Washington, Chicago, and New York.  This notebook can be submitted directly through the workspace when you are confident in your results.
+
+You will be graded against the project [Rubric](https://review.udacity.com/#!/rubrics/2508/view) by a mentor after you have submitted.  To get you started, you can use the template below, but feel free to be creative in your solutions!
+
+```{r echo=FALSE}
+library(ggplot2)
+file.names <- list("new_york_city.csv", "washington.csv", "chicago.csv")
+city.names <- list("New York", "Chicago", "Washington")
+my.data.frames <- lapply(file.names, read.csv)
+```
+
+### Note on code below
+
+**I did not use loops in some places because the print() function did not produce nice displays.**
+
+```{r echo=FALSE}
+n <- 1
+city.names[[n]]
+head(my.data.frames[[n]])
+tail(my.data.frames[[n]])
+```
+
+```{r echo=FALSE}
+n <- 2
+city.names[[n]]
+head(my.data.frames[[n]])
+tail(my.data.frames[[n]])
+```
+
+```{r echo=FALSE}
+n <- 3
+city.names[[n]]
+head(my.data.frames[[n]])
+tail(my.data.frames[[n]])
+```
+
+### Observation on data
+
+**Notice that in all the above, the last row is not valid, so we need to re read our data.**
+
+```{r echo=FALSE}
+# Notice in all the above, the last row is not valid. Hence, let us re read all the files excluding the last row
+# No idea why the CSV files are truncated, does not happen on my PC, already sent feedback to Udacity
+# Also, let us put in the correct data types
+re.read <- function(file.name)  {
+  data.frame = read.csv(file = file.name)
+  column.names <- names(data.frame)
+  column.types <- c("numeric", "POSIXct", "POSIXct", "numeric", rep("character", 2), "factor")
+  if(all(c("Gender", "Birth.Year") %in% column.names))  {
+    column.types <- c(column.types, "factor", "numeric")
+  }
+  result <- read.csv(file = file.name, nrows = (nrow(data.frame) - 1), colClasses = column.types)
+  # for the stations, we need to find all the station names from the start and end stations
+  station.names <- sort(union(result$Start.Station, result$End.Station))
+  result$Start.Station <- factor(x = result$Start.Station, levels = station.names)
+  result$End.Station <- factor(x = result$End.Station, levels = station.names)
+  return (result)
+}
+# In addition, prepare some colours and themes
+my.colours <- c("darkred", "darkgreen", "darkblue")
+my.themes <- lapply(my.colours, function(c) {  return (theme(title = element_text(colour = c))) })
+# re read all CSV files
+my.data.frames <- lapply(file.names, re.read)
+```
+
+```{r echo=FALSE}
+n <- 1
+city.names[[n]]
+head(my.data.frames[[n]])
+tail(my.data.frames[[n]])
+str(my.data.frames[[n]])
+```
+
+```{r echo=FALSE}
+n <- 2
+city.names[[n]]
+head(my.data.frames[[n]])
+tail(my.data.frames[[n]])
+str(my.data.frames[[n]])
+```
+
+```{r echo=FALSE}
+n <- 3
+city.names[[n]]
+head(my.data.frames[[n]])
+tail(my.data.frames[[n]])
+str(my.data.frames[[n]])
+```
+
+### Question 1
+
+
+**For each city, what are the top 20 most popular combination of start and end stations, and what is the number of occurrences of the top combination?**
+
+```{r echo=FALSE}
+fStartEndTopN <- function(data.frame, N = 20)  {
+    res1 <- as.data.frame(table(data.frame[, c("Start.Station", "End.Station")]))
+    res2 <- res1[order(-res1$Freq)[1:(N)], ]
+    return (res2)
+}
+freq.dfs <- lapply(my.data.frames, fStartEndTopN)
+```
+
+```{r echo=FALSE}
+p <- ggplot(data = freq.dfs[[1]], aes(x = Start.Station, y = End.Station, alpha = Freq)) +
+       scale_alpha_continuous(range = c(0.05, 1.0)) +
+       guides(alpha = guide_legend(reverse = TRUE)) +
+       geom_text(aes(label = Freq), size = 3, hjust = 0, vjust = 0) +
+       xlab("Starting Station") +
+       ylab("Ending Station") +
+       labs(alpha = "Frequency") +
+       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+       theme(plot.title = element_text(hjust = 0.5))
+title.beg <- "Top 20 Most Common Starting-Ending\nStation Combinations in"
+n <- 1
+city.names[[n]]
+freq.dfs[[n]]
+p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]]
+```
+
+```{r echo=FALSE}
+n <- 2
+city.names[[n]]
+freq.dfs[[n]]
+p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]]
+```
+
+```{r echo=FALSE}
+n <- 3
+city.names[[n]]
+freq.dfs[[n]]
+p %+% freq.dfs[[n]] + geom_point(colour = my.colours[[n]]) + ggtitle(paste(title.beg, city.names[[n]])) + my.themes[[n]]
+```
+
+**The most popular starting-ending station combinations for each city are as follows. Notice that for Washington the starting and ending is the same station, while this is not the case for New York nor Chicago.**
+
+```{r echo=FALSE}
+for (i in 1:3)  {
+    print(paste(city.names[[i]], " : ", (freq.dfs[[i]]$Freq)[1], " occurrences, from   ",
+                (freq.dfs[[i]]$Start.Station)[1], "  to  ", (freq.dfs[[i]]$End.Station)[1]))
+}
+```
+
+### Question 2
+
+**For each city and each type of user, what is the number of rides for each day of the week?**
+
+```{r echo=FALSE}
+for (i in 1:3)  {
+  my.data.frames[[i]]$DoW <- factor(weekdays(my.data.frames[[i]]$Start.Time), levels = c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
+}
+title.end <- "\nNumber of Riders in Observation Period by Day of the Week"
+p <-ggplot(my.data.frames[[1]], aes(x = DoW)) +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+      geom_text(stat = "count", aes(label = ..count..), size = 3, vjust = -1) +
+      xlab("Day of the Week") +
+      ylab("Number of Rides during Observation Period") +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+      theme(plot.title = element_text(hjust = 0.5)) + facet_wrap(~ User.Type)
+n <- 1
+by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
+city.names[[n]]
+p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
+```
+
+```{r echo=FALSE}
+n <- 2
+by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
+city.names[[n]]
+p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
+```
+
+```{r echo=FALSE}
+n <- 3
+by(my.data.frames[[n]]$DoW, my.data.frames[[n]]$User.Type, summary)
+city.names[[n]]
+p %+% my.data.frames[[n]] + geom_bar(fill = my.colours[[n]]) + my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
+```
+
+**For subscribers, the highest number of riders occurred on Wednesdays for both New York and Chicago, and on Tuesdays for Washington. For customers, the highest number of rides occurred on Sundays for New York, and on Saturdays for both Chicago and Washington.**
+
+### Question 3
+
+**For each city, what is the travel time of each ride?**
+
+```{r echo=FALSE}
+for (i in 1:3)  {
+  my.data.frames[[i]]$Trip.Minutes <- my.data.frames[[i]]$Trip.Duration / 60
+}
+title.end <- "\nDuration per Ride"
+p <-ggplot(my.data.frames[[1]], aes(x = Trip.Minutes, na.rm = TRUE)) +
+      scale_x_continuous(limits=c(0,60)) +
+      xlab("Duration of ride in minutes") +
+      ylab("Number of Rides Observed") +
+      theme(plot.title = element_text(hjust = 0.5)) + facet_wrap(~ User.Type)
+n <- 1
+city.names[[n]]
+summary(my.data.frames[[n]]$Trip.Minutes)
+by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary)
+p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
+  my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end))
+```
+
+```{r echo=FALSE}
+n <- 2
+city.names[[n]]
+summary(my.data.frames[[n]]$Trip.Minutes)
+by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary)
+p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
+  my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end))
+```
+
+```{r echo=FALSE}
+n <- 3
+city.names[[n]]
+summary(my.data.frames[[n]]$Trip.Minutes)
+by(my.data.frames[[n]]$Trip.Minutes, my.data.frames[[n]]$User.Type, summary)
+p %+% my.data.frames[[n]] + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
+  my.themes[[n]]  + ggtitle(paste(city.names[[n]], title.end))
+```
+
+**The median is 10.2, 11.8 and 11.2 minutes respectively for New York, Chicago and Washington.**
+
+### Question 4
+
+**What are the year of births of the riders in New York and Chicago?**
+
+```{r echo=FALSE}
+title.end <- "\nYear of Birth"
+p <-ggplot(my.data.frames[[1]], aes(x = Birth.Year, na.rm = TRUE)) +
+      scale_x_continuous(limits=c(1940,2005)) +
+      xlab("Year of Birth") +
+      ylab("Number of Persons Observed") +
+      theme(plot.title = element_text(hjust = 0.5)) + facet_wrap(~ Gender)
+n <- 1
+city.names[[n]]
+df <- my.data.frames[[n]]
+df <- df[match(unique(df$X), df$X), ]  # X should be the unique person identifier
+summary(df$Birth.Year)
+by(df$Birth.Year, df$Gender, summary)
+p %+% df + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
+  my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
+```
+
+```{r echo=FALSE}
+n <- 3
+city.names[[n]]
+df <- my.data.frames[[n]]
+df <- df[match(unique(df$X), df$X), ]  # X should be the unique person identifier
+summary(df$Birth.Year)
+by(df$Birth.Year, df$Gender, summary)
+p %+% df + geom_histogram(binwidth = 1, fill = my.colours[[n]]) +
+  my.themes[[n]] + ggtitle(paste(city.names[[n]], title.end))
+```
+
+**The median year of birth of the riders is 1981 for New York and 1984 for Washington.**
